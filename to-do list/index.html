@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo list</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    
+    <script type="text/javascript">
+        var tasks = [];
+        var count =0;
+        var currentEditID=-1;
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id != id);
+
+            showTodos();
+        }
+
+        function doneTodo(id) {
+            // alert('ss');
+            tasks = tasks.map(t => {
+                if(t.id === id) {
+                    if(t.status === 1){
+                        t.status = 0;
+                    }else {
+                        t.status = 1;
+                    }
+                }
+                return t;
+            })
+            showTodos();
+        }
+        function AddValueToEdit(taskID){
+            
+            var todoEdit= document.getElementById("todoEdit");
+            var task;
+            task=tasks.filter(t=> t.id===taskID );
+            todoEdit.value = task[0].todo;
+            currentEditID = taskID+1;
+        }
+        function SaveEditedTask(){
+            var todoEdit=document.getElementById("todoEdit").value;
+            tasks[currentEditID-1].todo=todoEdit;
+            document.getElementById("todoEdit").value="";
+            showTodos();
+        }
+
+        function showTodos() {
+            var todo_list = document.getElementById('todo_list');
+            todo_list.innerHTML = "";
+            tasks.forEach(task => {
+                if(task.status === 0){
+                      todo_list.innerHTML += "<p><div class='listing'><input onchange='doneTodo(" + task.id +  ")' type='checkbox'> " +
+                          task.todo +
+                          " <button onclick='deleteTask(" + task.id + ")'>Delete</button><button href='#' onclick='AddValueToEdit("+task.id+ ")'>Edit</button></div></p>";
+                }else {
+                      todo_list.innerHTML += "<p class = 'striked'><div class='striked listing'><input checked = 'true' onchange='doneTodo(" + task.id +  ")' type='checkbox'> " +
+                          task.todo +
+                          " <button  onclick='deleteTask(" + task.id + ")'>Delete</button><button href='#' onclick='AddValueToEdit("+task.id+ ")'>Edit</button></div></p>";
+                }
+               
+            })
+        }
+
+        function addTodo() {
+            
+            var todo = document.getElementById('todo').value;
+            if(todo != ''){
+                  tasks.push({
+                  id: count++,
+                  todo: todo,
+                  status: 0
+                  });
+                  showTodos();
+                  document.getElementById('todo').value = "";
+            }else {
+                alert('cant have empty todo');
+            }
+          
+        }
+    </script>
+</head>
+
+<body>
+   <div class="content">
+       <p>To-do List</p>
+    <input type="text" id="todo" placeholder="add todo list here">
+    <button onclick="addTodo()">Add</button>
+    <input type="text" id="todoEdit" placeholder="Edit here">
+    <button onclick="SaveEditedTask()">Save</button><br> 
+    <p>Tasks</p>
+</div>
+    <div id="todo_list">
+       
+    </div>
+  
+</body>
+
+</html>
